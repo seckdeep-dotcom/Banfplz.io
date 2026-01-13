@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FF Booster Pro</title>
+
+<style>
+/* ===== GLOBAL ===== */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Segoe UI,Arial,sans-serif;
+  color:#fff;
+  background:radial-gradient(circle at top,#1a0000,#000);
+  overflow-x:hidden;
+}
+
+/* ===== SPLASH SCREEN ===== */
+.splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: radial-gradient(circle at top, #1a0000, #000);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.5s ease;
+}
+.splash.fade-out {
+  opacity: 0; pointer-events: none;
+}
+.loader {
+  width: 50px; height: 50px;
+  border: 3px solid rgba(255,60,60,.3);
+  border-top: 3px solid #ff3b3b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-top: 20px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== BACKGROUND ANIM ===== */
+.bg{
+  position:fixed; inset:0; z-index:-1;
+  background:
+    radial-gradient(circle, rgba(255,60,60,.14) 2px, transparent 3px);
+  background-size:60px 60px;
+  animation:bgMove 22s linear infinite;
+}
+@keyframes bgMove{
+  from{background-position:0 0}
+  to{background-position:300px 300px}
+}
+
+/* ===== CONTAINER ===== */
+.container{
+  max-width:420px;
+  margin:auto;
+  padding:20px;
+  opacity: 0;
+  animation: fadeIn 0.5s ease 1.5s forwards;
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+h1{
+  text-align:center; 
+  letter-spacing:2px;
+  color:#ff3b3b; 
+  margin:10px 0 20px;
+  text-shadow: 0 0 10px rgba(255,59,59,0.3);
+}
+
+/* ===== CARD ===== */
+.card{
+  background:rgba(18,18,18,.92);
+  border-radius:16px; 
+  padding:14px;
+  margin-bottom:14px;
+  box-shadow:0 0 20px rgba(255,0,0,.15);
+  animation:fadeUp .5s ease;
+  animation-fill-mode: both;
+}
+.card:nth-child(1) { animation-delay: 1.6s; }
+.card:nth-child(2) { animation-delay: 1.7s; }
+.card:nth-child(3) { animation-delay: 1.8s; }
+.card:nth-child(4) { animation-delay: 1.9s; }
+.card:nth-child(5) { animation-delay: 2.0s; }
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:none}
+}
+
+/* ===== OPTION ROW ===== */
+.option{display:flex;align-items:center;justify-content:space-between}
+.left{display:flex;align-items:center;gap:10px}
+.icon{
+  font-size:22px;
+  filter: drop-shadow(0 0 3px rgba(255,59,59,0.5));
+}
+
+/* ===== TOGGLE ===== */
+.switch{position:relative;width:52px;height:28px}
+.switch input{display:none}
+.sliderBtn{
+  position:absolute; inset:0; border-radius:30px;
+  background:#333; transition:.25s;
+  cursor: pointer;
+}
+.sliderBtn:before{
+  content:""; position:absolute; top:3px; left:3px;
+  width:22px; height:22px; border-radius:50%;
+  background:#aaa; transition:.25s;
+}
+.switch input:checked + .sliderBtn{
+  background:linear-gradient(45deg,#ff2d2d,#ff6a6a);
+  box-shadow:0 0 10px rgba(255,60,60,.8);
+}
+.switch input:checked + .sliderBtn:before{
+  transform:translateX(24px); background:#fff;
+}
+
+/* ===== RANGE ===== */
+.range{
+  width:100%; 
+  margin-top:10px;
+  height: 8px;
+  -webkit-appearance: none;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  outline: none;
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff3b3b;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(255,59,59,0.8);
+}
+.value{font-size:13px;color:#bbb;text-align:right; margin-top: 5px;}
+
+/* ===== BUTTONS ===== */
+.launchBtns{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+  animation: fadeUp 0.5s ease 2.1s both;
+}
+button{
+  flex:1; 
+  padding:15px; 
+  border:none; 
+  border-radius:14px;
+  background:linear-gradient(45deg,#ff2d2d,#ff7a7a);
+  color:#fff; 
+  font-weight:700; 
+  font-size:15px;
+  box-shadow:0 0 18px rgba(255,50,50,.45);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+button:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+button:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
+}
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(20, 20);
+    opacity: 0;
+  }
+}
+button:active{
+  transform:scale(.97);
+  box-shadow:0 0 12px rgba(255,50,50,.6);
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  text-align:center; 
+  font-size:12px; 
+  color:#777; 
+  margin-top:10px;
+  animation: fadeUp 0.5s ease 2.2s both;
+}
+.small{
+  font-size:12px;
+  color:#aaa;
+  margin-top: 4px;
+}
+
+/* ===== STATUS MESSAGE ===== */
+.status-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border-left: 4px solid #ff3b3b;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  max-width: 90%;
+  text-align: center;
+}
+.status-message.show {
+  opacity: 1;
+}
+</style>
+</head>
+
+<body>
+<!-- Splash Screen -->
+<div class="splash" id="splash">
+  <div style="font-size: 42px; margin-bottom: 15px; animation: pulse 1.5s infinite;">🚀</div>
+  <h1 style="color: #ff3b3b; margin-bottom: 8px; font-size: 28px;">FF BOOSTER PRO</h1>
+  <div style="color: #aaa; margin-bottom: 25px; font-size: 14px;">Chargement de l'optimisation...</div>
+  <div class="loader"></div>
+</div>
+
+<!-- Background Animation -->
+<div class="bg"></div>
+
+<!-- Status Message -->
+<div class="status-message" id="statusMessage"></div>
+
+<!-- Main Container -->
+<div class="container">
+  <h1>FF BOOSTER PRO</h1>
+
+  <div class="card">
+    <div class="option">
+      <div class="left"><span class="icon">🚀</span>Optimisation téléphone</div>
+      <label class="switch">
+        <input type="checkbox" id="optimize"/>
+        <span class="sliderBtn"></span>
+      </label>
+    </div>
+    <div class="small">Préparation appareil & stabilité</div>
+  </div>
+
+  <div class="card">
+    <div class="option">
+      <div class="left"><span class="icon">⚡</span>Performance & Fluidité</div>
+      <label class="switch">
+        <input type="checkbox" id="performance"/>
+        <span class="sliderBtn"></span>
+      </label>
+    </div>
+    <div class="small">Réduction latence & micro-saccades</div>
+  </div>
+
+  <div class="card">
+    <div class="option">
+      <div class="left"><span class="icon">🎯</span>Sensibilité améliorée</div>
+      <label class="switch">
+        <input type="checkbox" id="sensitivity"/>
+        <span class="sliderBtn"></span>
+      </label>
+    </div>
+    <div class="small">Ajustement fin des micro-mouvements</div>
+  </div>
+
+  <div class="card">
+    <div class="option">
+      <div class="left"><span class="icon">🔫</span>Précision stabilisée</div>
+      <label class="switch">
+        <input type="checkbox" id="accuracy"/>
+        <span class="sliderBtn"></span>
+      </label>
+    </div>
+    <div class="small">Timing & contrôle du drag</div>
+  </div>
+
+  <div class="card">
+    <div class="left"><span class="icon">🧠</span>Facilitation Headshot</div>
+    <input class="range" type="range" min="0" max="80" value="40" id="headshot"/>
+    <div class="value">Assistance : <span id="hsValue">40</span>% (max 80%)</div>
+  </div>
+
+  <div class="launchBtns">
+    <button onclick="saveProfile('ff')">Free Fire</button>
+    <button onclick="saveProfile('max')">Free Fire MAX</button>
+  </div>
+
+  <div class="footer">
+    Assistant d'optimisation – aucune modification du jeu<br>
+    <span style="color: #666; font-size: 11px;">Version 2.0 • Compatible WebView APK</span>
+  </div>
+</div>
+
+<script>
+/* ===== INITIALISATION ===== */
+document.addEventListener('DOMContentLoaded', function() {
+  // Charger les préférences sauvegardées
+  const saved = localStorage.getItem("ff_booster_profile");
+  if (saved) {
+    try {
+      const profile = JSON.parse(saved);
+      document.getElementById('optimize').checked = profile.perfBoost > 0;
+      document.getElementById('performance').checked = profile.fpsStability > 0;
+      document.getElementById('sensitivity').checked = profile.sensiFactor > 1;
+      document.getElementById('accuracy').checked = profile.aimStability > 1;
+      document.getElementById('headshot').value = Math.round(profile.hsAssist * 100);
+      document.getElementById('hsValue').textContent = Math.round(profile.hsAssist * 100);
+    } catch(e) {
+      console.log("Nouvel utilisateur ou données corrompues");
+    }
+  }
+  
+  // Masquer le splash screen après délai
+  setTimeout(function() {
+    document.getElementById('splash').classList.add('fade-out');
+    setTimeout(function() {
+      document.getElementById('splash').style.display = 'none';
+    }, 500);
+  }, 1500);
+});
+
+/* ===== UI UPDATES ===== */
+const hs = document.getElementById("headshot");
+const hsValue = document.getElementById("hsValue");
+hs.addEventListener("input", () => {
+  hsValue.textContent = hs.value;
+  // Feedback visuel
+  hs.style.background = `linear-gradient(to right, #ff3b3b 0%, #ff3b3b ${hs.value}%, rgba(255,255,255,0.1) ${hs.value}%, rgba(255,255,255,0.1) 100%)`;
+});
+
+/* ===== STATUS MESSAGE FUNCTION ===== */
+function showStatus(message, duration = 3000) {
+  const statusEl = document.getElementById('statusMessage');
+  statusEl.textContent = message;
+  statusEl.classList.add('show');
+  setTimeout(() => {
+    statusEl.classList.remove('show');
+  }, duration);
+}
+
+/* ===== LOGIQUE & LANCEMENT ===== */
+function saveProfile(version) {
+  // Récupérer les valeurs
+  const profile = {
+    perfBoost: document.getElementById("optimize").checked ? 20 : 0,
+    fpsStability: document.getElementById("performance").checked ? 25 : 0,
+    sensiFactor: document.getElementById("sensitivity").checked ? 1.1 : 1,
+    aimStability: document.getElementById("accuracy").checked ? 1.2 : 1,
+    hsAssist: Number(hs.value) / 100,
+    game: version,
+    timestamp: new Date().toISOString()
+  };
+
+  // Ajustement pour FF MAX
+  if (version === "max") { 
+    profile.perfBoost -= 5; 
+    profile.fpsStability += 5; 
+  }
+
+  // Sauvegarder
+  localStorage.setItem("ff_booster_profile", JSON.stringify(profile));
+  
+  // Calcul des statistiques
+  const totalBoost = profile.perfBoost + profile.fpsStability;
+  const boostPercentage = Math.min(100, Math.round(totalBoost / 50 * 100));
+  
+  // Message personnalisé
+  const gameName = version === "ff" ? "Free Fire" : "Free Fire MAX";
+  showStatus(`✅ Profil sauvegardé pour ${gameName} (${boostPercentage}% boost)`);
+  
+  // Animation de préparation
+  const buttons = document.querySelectorAll('button');
+  buttons.forEach(btn => {
+    btn.style.animation = 'none';
+    setTimeout(() => {
+      btn.style.animation = 'pulse 0.5s';
+    }, 10);
+  });
+
+  // Message d'alerte amélioré
+  setTimeout(() => {
+    alert(
+      "🔥 OPTIMISATION APPLIQUÉE 🔥\n\n" +
+      `• ${gameName} sélectionné\n` +
+      `• Boost performance: ${boostPercentage}%\n` +
+      `• Assistance headshot: ${hs.value}%\n` +
+      `• Précision: ${profile.aimStability}x\n\n` +
+      "Lancement du jeu en cours..."
+    );
+
+    // Lancement avec fallback
+    launchGame(version);
+  }, 800);
+}
+
+/* ===== LANCEMENT DU JEU ===== */
+function launchGame(version) {
+  const deepLinks = {
+    ff: "ff://launch",
+    max: "ffmax://launch"
+  };
+  
+  const playStoreLinks = {
+    ff: "https://play.google.com/store/apps/details?id=com.dts.freefireth",
+    max: "https://play.google.com/store/apps/details?id=com.dts.freefiremax"
+  };
+  
+  // Tentative 1: Deep link personnalisé
+  let opened = false;
+  const startTime = Date.now();
+  window.location.href = deepLinks[version];
+  
+  // Fallback intelligent
+  setTimeout(() => {
+    const elapsed = Date.now() - startTime;
+    
+    // Si la page est toujours active après 1.5s
+    if (document.hasFocus() && elapsed > 1500) {
+      showStatus("Redirection vers Play Store...", 2000);
+      
+      // Tentative 2: Ouverture Play Store
+      setTimeout(() => {
+        window.open(playStoreLinks[version], '_blank');
+        
+        // Message final
+        setTimeout(() => {
+          showStatus("Ouvre Free Fire manuellement", 3000);
+        }, 1000);
+      }, 500);
+    }
+  }, 1500);
+}
+
+/* ===== ANIMATION PULSE ===== */
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
